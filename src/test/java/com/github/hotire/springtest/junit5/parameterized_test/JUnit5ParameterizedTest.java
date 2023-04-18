@@ -3,24 +3,20 @@ package com.github.hotire.springtest.junit5.parameterized_test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
 import java.time.Month;
 import java.util.EnumSet;
 import java.util.stream.Stream;
 import org.apache.logging.log4j.util.Strings;
-import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.ArgumentsProvider;
 import org.junit.jupiter.params.provider.ArgumentsSource;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
+/**
+ * https://www.baeldung.com/parameterized-tests-junit-5
+ */
 class JUnit5ParameterizedTest {
 
   @ParameterizedTest
@@ -63,6 +59,13 @@ class JUnit5ParameterizedTest {
     assertThat(Strings.isBlank(input)).isEqualTo(expected);
   }
 
+  @ParameterizedTest
+  @VariableSource("arguments")
+  void isBlank_ShouldReturnTrueForNullOrBlankStringsVariableSource(
+    String input, boolean expected) {
+    assertThat(Strings.isBlank(input)).isEqualTo(expected);
+  }
+
 
   private static Stream<Arguments> provideStringsForIsBlank() {
     return Stream.of(
@@ -73,4 +76,10 @@ class JUnit5ParameterizedTest {
     );
   }
 
+  static Stream<Arguments> arguments = Stream.of(
+    Arguments.of(null, true), // null strings should be considered blank
+    Arguments.of("", true),
+    Arguments.of("  ", true),
+    Arguments.of("not blank", false)
+  );
 }
